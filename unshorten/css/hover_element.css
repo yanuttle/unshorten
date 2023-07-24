@@ -1,0 +1,7 @@
+.shortened_link {
+    color:brown
+}
+
+.shortened_link:hover {
+    color: aquamarine;
+}

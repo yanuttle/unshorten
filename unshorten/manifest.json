@@ -1,0 +1,26 @@
+{
+    "name": "unshorten",
+    "version": "1.0.0",
+    "description": "Unshortens any short-urls to keep you safe",
+    "manifest_version": 3,
+    "author": "Kacper",
+    "permissions": [
+        "activeTab",
+        "contextMenus",
+        "scripting",
+        "tabs"
+    ],
+    "content_scripts": [
+        {
+        "js": ["scripts/unshorten_links.js"],
+        "css": ["css/hover_element.css"],
+        "matches": ["<all_urls>"]}
+    ],
+    "action":{
+        "default_popup": "html/index.html",
+        "default_title": "unshorten"
+    },
+    "background": {
+        "service_worker": "scripts/background.js"
+    }
+}
