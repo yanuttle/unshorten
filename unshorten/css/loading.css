@@ -1,4 +1,16 @@
 .loading {
+    animation: fadeIn 3s;
+    display: inline;
+}
 
-    transition: transform scale(0) 2s ease-in-out;
+@keyframes fadeIn {
+    0%  {
+        scale: 0.5;
+        opacity: 0;
+    }
+
+    100% {
+        scale: 1;
+        opacity: 1;
+    }
 }

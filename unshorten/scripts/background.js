@@ -13,36 +13,34 @@ chrome.runtime.onInstalled.addListener(() => {
         title: "Show Target Link",
         contexts: [context],
         id: context })
-    console.log("creating context menu")
 });
 
-async function getCurrentTab() {
 
-    return tab;
-}
+chrome.contextMenus.onClicked.addListener(sendClickInfoToCScript);
 
+// This is necessary, because I don't want to query for the same tabId twice
 var currTab;
-
-chrome.contextMenus.onClicked.addListener(sendInfoToContextScript);
-
-function sendInfoToContextScript(tab) {
-    console.log("context menu item clicked");
-
-    console.log("sendind message to background");
-    chrome.tabs.query({active : true, currentWindow : true}, function (tabs) {
-        currTab = tabs[0];
-        chrome.tabs.sendMessage(currTab.id, {type : 'clicked'});
-     })
-}
 
 chrome.runtime.onMessage.addListener((message) => {
     if (message.type == "url") {
-        console.log("got message from foreground!");
-        console.log("processing link")
-        console.log(followPath(message.content))
+        followPath(message.content)
     }
 })
 
+function sendClickInfoToCScript(tab) {
+    chrome.tabs.query({active : true, currentWindow : true}, function (tabs) {
+        currTab = tabs[0];
+        chrome.tabs.sendMessage(currTab.id, {type : 'clicked'});
+    })
+}
+
+function sendResponseToCSCript(response) {
+    console.log(`sending ${response} to content script!`)
+    chrome.tabs.sendMessage(currTab.id, {type: "response", content: response})
+}
+
+/* The function has to be defined here, because otherwise the request 
+    won't get approved... of CORS. */
 async function followPath(url) {
     var request = new Request(url)
     fetch(request)
@@ -52,30 +50,11 @@ async function followPath(url) {
                 followPath(response.url)
             }
             else if (response.status == 200) {
-                sendResponseToContent(response.url);
+                sendResponseToCSCript(response.url);
             }
             else {
                 console.log("Another status code was posted.");
             } 
         })
 };
-
-function sendResponseToContent(message) {
-    console.log(`sending ${message} to content script!`)
-    chrome.tabs.sendMessage(currTab.id, {type: "result", content: message})
-}
-
-// chrome.contextMenus.onClicked.addListener((info, tab) => {
-//     chrome.scripting.executeScript({
-//         target: {tabId: tab.id},
-//         func: async function() {
-//             let queryOptions = { active: true, lastFocusedWindow: true };
-//             // `tab` will either be a `tabs.Tab` instance or `undefined`.
-//             let [tab] = await chrome.tabs.query(queryOptions);
-//             var currentTabId = getCurrentTab().id;
-//             var anchor = document.activeElement;
-//             var href = anchor.getAttribute("href");
-//             chrome.runtime.sendMessage(tab.id, {href: href});
-//         }
-//       });
-// });
+    
