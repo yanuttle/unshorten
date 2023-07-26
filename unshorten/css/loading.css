@@ -1,0 +1,4 @@
+.loading {
+
+    transition: transform scale(0) 2s ease-in-out;
+}

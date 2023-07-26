@@ -13,7 +13,7 @@
     "content_scripts": [
         {
         "js": ["scripts/unshorten_links.js"],
-        "css": ["css/hover_element.css"],
+        "css": ["css/loading.css"],
         "matches": ["<all_urls>"]}
     ],
     "action":{

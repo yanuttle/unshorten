@@ -3,6 +3,8 @@ console.log("The file has been loaded...")
 // from http://web.archive.org/web/20210924065742/https://j11y.io/javascript/parsing-urls-with-the-dom/
 // uses DOM API to parse the url and return all the different properties of a link
 // it's perfect for this use case, although I don't need all of the properties
+
+console.log("loaded, I guess")
 function parseURLfromAnchor(anchorElement) {
     return {
         source: anchorElement.href,
@@ -11,21 +13,33 @@ function parseURLfromAnchor(anchorElement) {
     }
 }
 
-// const all = document;
-// const shortenerHosts = ["bit.ly", "tinyurl.com"];
-// var allAnchorElements =  all.getElementsByTagName("a");
-
-var anchor;
 
 chrome.runtime.onMessage.addListener((message) => {
-    anchor = message.anchor;
-    console.log(anchor);
-    alert("hello")
+    // correct type of message?
+
+    const anchor = document.activeElement;
+
+    if (message.type == "clicked") {
+        console.log(anchor);
+        sendUrlToBackground(anchor.href);
+    }
+
+    else if (message.type == "result") {
+        var url = message.content;
+        replaceUrl(anchor, url);
+        showLoading(anchor);
+    }
+    
 })
 
+function replaceUrl(anchor, url) {
+    anchor.innerHTML = url;
+}
 
-// for (let anchorElement of allAnchorElements) {
-//     if (shortenerHosts.includes(parseURLfromAnchor(anchorElement).host)) {
-//         anchorElement.classList.add("shortened_link");
-//     }
-// }
+function showLoading(anchor) {
+    anchor.classList.add("loading");
+}
+
+function sendUrlToBackground(url) {
+    chrome.runtime.sendMessage({type: 'url', content: url});
+}
