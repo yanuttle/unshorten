@@ -5,6 +5,7 @@ With this add-on you can see where the link is taking you with a click of a butt
 
 ## Example
 ![til](./example.gif)
+
 When you right-click on a URL, you can see a new context menu item.
 By choosing 'Show Target Link' you can make 'unshorten' show you the URL behind the shortened address.
 
